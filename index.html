@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>영어 배틀 아레나</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css?v=3">
+<style>html,body{margin:0;min-height:100%;background:#0b1119;color:#ece8e1;font-family:system-ui,sans-serif}*{box-sizing:border-box}.hide{display:none!important}body.auth-locked .scr{display:none!important}#authGate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px}#adminPanel{display:none}#adminPanel.open{display:block}</style>
+
+
+<script src="assets.js" onerror="void 0"></script>
+</head>
+<body class="auth-locked">
+<div id="authGate"><div class="auth-card"><span class="tag">ENGLISH BATTLE · ACCOUNT</span><h2 id="authTitle">로그인</h2><p class="mut">계정으로 로그인해야 게임을 플레이할 수 있어요.</p><div class="auth-tabs"><button id="tabLogin" class="active" type="button">로그인</button><button id="tabSignup" type="button">회원가입</button></div><form id="authForm"><label for="authUsername">아이디</label><input id="authUsername" type="text" autocomplete="username" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_-]{3,24}" placeholder="아이디 (영문, 숫자, _, -)"><label for="authPassword">비밀번호</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="8자 이상"><div id="signupNameWrap" class="hide"><label for="authNickname">게임 닉네임</label><input id="authNickname" maxlength="8" placeholder="게임에서 사용할 닉네임"></div><button id="authSubmit" class="btn" type="submit">로그인</button></form><div id="authError" class="auth-error" role="status"></div><p class="auth-note">아이디와 비밀번호로 로그인합니다. 관리자 권한은 서버에서 안전하게 확인합니다.</p></div></div>
+<div id="accountBar"><span id="accountLabel">로그인됨</span><button id="logoutBtn" class="admin-mini">로그아웃</button></div><button id="adminOpen" class="btn">관리자 패널</button>
+<div id="adminPanel"><div class="admin-shell"><div class="admin-head"><div><span class="tag">SECURE CONTROL</span><h2>관리자 센터</h2><div class="mut small">회원 및 게임 운영 관리 · 서버 권한 검증</div></div><button id="adminClose" class="admin-close">닫기</button></div><div class="admin-grid"><nav id="adminNav" class="admin-nav"></nav><main id="adminContent" class="admin-content"></main></div></div></div>
+
+<section id="home" class="scr">
+  <div class="homewrap">
+    <div class="brand">
+      <img id="logo" class="hide" alt="" style="max-width:100%;max-height:130px;margin-bottom:12px"><br><span class="tag">3D FPS · ENGLISH QUIZ</span>
+      <h1>ENGLISH<br><span>BATTLE</span></h1>
+      <p class="mut" style="font-size:18px">영어 퀴즈로 무기를 얻고, 친구 또는 CPU와 1인칭 전투!</p>
+    </div>
+    <div class="card menu">
+      <div class="lab">닉네임</div>
+      <input id="nick" maxlength="8" placeholder="닉네임을 입력하세요">
+      <button id="solo" class="btn" disabled>CPU 대전<small>혼자서 연습하기</small></button>
+      <button id="mk" class="btn" disabled>방 만들기<small>친구와 함께 플레이</small></button>
+      <div class="lab" style="margin-top:16px">방 코드로 입장</div>
+      <div class="row"><input id="code" maxlength="4" placeholder="4자리 코드" autocapitalize="off"><button id="jn" class="btn alt" disabled>입장</button></div>
+      <p id="msg" class="mut">연결 중…</p>
+    </div>
+  </div>
+  <p class="mut small keys">조작 · WASD 이동 · 마우스 시점(클릭하면 고정) · 클릭/스페이스 공격 · E 능력 · Q 궁극기 · SHIFT 구르기 · T 채팅 · / 명령어 · 1~4 퀴즈 답</p>
+</section>
+
+<section id="lobby" class="scr hide">
+  <h2>대기실 <span id="cnt" class="mut small"></span></h2>
+  <div class="lob">
+    <div>
+      <div class="card"><div id="rcl" class="lab">방 코드</div><div id="rc" class="code"></div><div id="netnote" class="small" style="color:var(--ac);text-align:center;margin-top:8px"></div></div>
+      <div class="card"><div class="lab">플레이어</div><div id="plist"></div></div>
+    </div>
+    <div id="chs" class="card"></div>
+    <div>
+      <div id="modes" class="card"></div>
+      <div id="maps" class="card"></div>
+      <div id="bots" class="card"></div>
+    </div>
+  </div>
+  <button id="st" class="btn">게임 시작</button>
+  <p id="lw" class="mut" style="text-align:center">방장이 게임을 시작할 때까지 기다려요…</p>
+  <button id="lv" class="btn alt" style="margin:10px auto 0;display:block">나가기</button>
+</section>
+
+<section id="quiz" class="scr hide">
+  <h2>영어 퀴즈</h2>
+  <p class="mut">5문제를 풀어요! 많이 맞힐수록 좋은 무기를 고를 수 있어요. 무기는 <b>20초 안에</b> 골라야 해요. 안 고르면 영구 차단!</p>
+  <div id="qbox" class="card"></div>
+</section>
+
+<section id="game" class="scr hide">
+  <div class="hud"><span id="h1"></span><span id="h2"></span><span id="h3"></span></div>
+  <div class="cv"><canvas id="gl"></canvas><canvas id="rcv" class="hide"></canvas><canvas id="cv" width="900" height="560"></canvas><div id="mq" class="card hide"></div><div id="rq" class="card hide"></div></div>
+  <div id="feed"></div>
+</section>
+
+<section id="end" class="scr hide">
+  <h2>결과</h2>
+  <div class="card"><div id="board"></div></div>
+  <button id="again" class="btn">다시 하기 (방장)</button>
+  <p id="ew" class="mut" style="text-align:center">방장이 다시 시작하길 기다려요…</p>
+  <button id="lv2" class="btn alt" style="margin:10px auto 0;display:block">나가기</button>
+</section>
+
+<div id="dv" class="card hide"><div class="qq">개발자 모드</div><input id="dvp" type="password" placeholder="비밀번호" autocomplete="off"><div class="row"><button id="dvok" class="btn">확인</button><button id="dvno" class="btn alt">취소</button></div><p id="dvm" class="mut small"></p></div>
+<div id="dev" class="card hide"></div>
+<div id="chatw" class="hide"><div id="chatlog"></div><input id="chatin" maxlength="80" placeholder="채팅 (Enter 전송 · Esc 닫기)" autocomplete="off"></div>
+<div id="cmdw" class="card hide"><div id="cmdo" class="mut"></div><input id="cmd" placeholder="/help" autocomplete="off" style="margin:0"></div>
+<button id="admb" class="btn hide">운영자</button>
+<div id="adm" class="card hide"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="game.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>
